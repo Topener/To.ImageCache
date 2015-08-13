@@ -50,11 +50,11 @@ var cacheSize = function(){
 	var bytes = 0;
 	if (c.debug)
 		Ti.API.info('TIC - calculating cache size');
-	
+
 	_.each(fileList, function(file){
 		bytes += file.fileSize;
 	});
-	
+
 	return bytes;
 };
 
@@ -64,7 +64,7 @@ var cacheSize = function(){
 var clearCache = function(){
 	if (c.debug)
 		Ti.API.info('TIC - Completely emtying cache');
-		
+
 	_.each(fileList, function(file){
 		removeFile(file.filename);
 	});
@@ -80,14 +80,14 @@ var flushExpired = function(){
 	var removeFiles = [];
 	_.each(fileList, function(file){
 		if (Date.now() - (file.added + (file.expireTime * 1000)) > 0){
-			
+
 			if (c.debug)
 				Ti.API.info('TIC - found expired file, removing');
-			
+
 			removeFiles.push(file.filename);
 		}
 	});
-	
+
 	_.each(removeFiles, removeFile);
 };
 
@@ -99,24 +99,24 @@ var flushExpired = function(){
 var removeFile = function(filename){
 	if (c.debug)
 		Ti.API.info('TIC - removing file ' + filename);
-		
+
 	var file = hasFile(filename);
 	if (!file){
 		return false;
 	}
-	
+
 	var path = Ti.Filesystem.applicationDataDirectory + file.folder;
 	var f = Ti.Filesystem.getFile(path, file.filename);
-	
+
 	if (!f.exists()){
 		fileList = _.without(fileList, file);
 		Ti.App.Properties.setList('To.ImageCache.ImageList', fileList);
 		if (c.debug)
 			Ti.API.info('TIC - file has aleady been removed');
-		
+
 		return false;
 	}
-	
+
 	if (f.deleteFile()){
 		if (c.debug)
 			Ti.API.info('TIC - file has been removed');
@@ -149,13 +149,13 @@ var storeFile = function(filename, blob){
 	}
 	// check if directory has been created
 	checkDir();
-	
+
 	var path = Ti.Filesystem.applicationDataDirectory + c.folder;
 	var file = Ti.Filesystem.getFile(path, filename);
 	file.write(blob);
 	// destroy file after it has been saved
 	file = null;
-	
+
 	fileList.push({
 		filename: filename,
 		added: Date.now(),
@@ -163,10 +163,10 @@ var storeFile = function(filename, blob){
 		expireTime: c.expireTime,
 		folder: c.folder
 	});
-	
+
 	// add file to collection
 	Ti.App.Properties.setList('To.ImageCache.ImageList', fileList);
-	
+
 	// destroy blob
 	blob = null;
 };
@@ -179,7 +179,7 @@ var readFile = function(filename){
 		Ti.API.info('TIC - reading file from system ' + filename);
 	}
 	var file = hasFile(filename);
-	
+
 	var path = Ti.Filesystem.applicationDataDirectory + file.folder;
 	var file = Ti.Filesystem.getFile(path, filename);
 	return file.read();
@@ -189,7 +189,7 @@ var readFile = function(filename){
  * this function will always return a blob, wether it was cached or not
  * in case it wasn't cached, it will do so after first fetching it.
  * in case it was cached, it will just read the file and return the blob
- * Therefore, only use this function if you want to cache it. 
+ * Therefore, only use this function if you want to cache it.
  * @param {String} url
  */
 var remoteImage = function(url){
@@ -200,18 +200,18 @@ var remoteImage = function(url){
 	// calculate local filename
 	var filename = Ti.Utils.md5HexDigest(url);
 	Ti.API.info(filename);
-	
+
 	if (hasFile(filename)){
 		if (c.debug){
 			Ti.API.info('TIC - has file in system');
 			Ti.API.info('TIC - *************');
 		}
-		
+
 		// get file
 		return readFile(filename);
 	}
 	Ti.API.info('TIC - doesn\'t have file yet');
-	
+
 	// generate a blob
 	var image = Ti.UI.createImageView({
 		image : url,
@@ -220,9 +220,9 @@ var remoteImage = function(url){
 	});
 	var blob =  image.toBlob();
 	image = null;
-	
+
 	storeFile(filename, blob);
-	
+
 	Ti.API.info('TIC - *************');
 	return blob;
 };
@@ -241,20 +241,46 @@ var cache = function(url, timeout){
 	if (hasFile(filename)){
 		if (c.debug)
 			Ti.API.info('TIC - file already cached');
-			
+
 		return false;
 	}
-		
+
 	var xhr = Titanium.Network.createHTTPClient({
 		onload: function() {
 			storeFile(filename, this.responseData);
+			//Clear out temporary files
+			clear_temp_files();
 		},
 		timeout: timeout
 	});
 	xhr.open('GET', url);
 	xhr.send();
+
 	return true;
 };
+
+/**
+	* This function will clear out any temporary files in the Application Data Directory
+	* You can see these in Android via the Monitor application
+**/
+
+function clear_temp_files() {
+
+	var dir = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory);
+	var fileList = dir.getDirectoryListing();
+
+	var l = fileList.length;
+
+	for (var i = 0; i < l; i++) {
+			var file2 = fileList[i];
+			if (file2.indexOf('tihttp') > -1) {
+					var path = dir.nativePath;
+					var file = Titanium.Filesystem.getFile(path + '/' + file2);
+					file.deleteFile();
+			}
+	}
+
+}
 
 /**
  * only export what is needed externally
