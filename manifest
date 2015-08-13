@@ -1,0 +1,10 @@
+version: 0.1
+description: A simple Commonjs module to cache images a little less temporarily
+author: Rene Pot
+license: Apache 2.0
+copyright: Copyright © 2015 Rene Pot
+name: To.ImageCache
+moduleid: To.ImageCache
+guid: 5469c28e-9682-48b5-b3c4-b204a793db69
+platform: commonjs
+minsdk: 3.5.1.GA
