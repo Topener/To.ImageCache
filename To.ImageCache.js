@@ -79,7 +79,7 @@ var flushExpired = function(){
 
 	var removeFiles = [];
 	_.each(fileList, function(file){
-		if (Date.now() - (file.added + (c.expireTime * 1000)) > 0){
+		if (Date.now() - (file.added + (file.expireTime * 1000)) > 0){
 			
 			if (c.debug)
 				Ti.API.info('TIC - found expired file, removing');
@@ -105,7 +105,7 @@ var removeFile = function(filename){
 		return false;
 	}
 	
-	var path = Ti.Filesystem.applicationDataDirectory + c.folder;
+	var path = Ti.Filesystem.applicationDataDirectory + file.folder;
 	var f = Ti.Filesystem.getFile(path, file.filename);
 	
 	if (!f.exists()){
@@ -159,7 +159,9 @@ var storeFile = function(filename, blob){
 	fileList.push({
 		filename: filename,
 		added: Date.now(),
-		fileSize: blob.length
+		fileSize: blob.length,
+		expireTime: c.expireTime,
+		folder: c.folder
 	});
 	
 	// add file to collection
@@ -176,7 +178,9 @@ var readFile = function(filename){
 	if (c.debug){
 		Ti.API.info('TIC - reading file from system ' + filename);
 	}
-	var path = Ti.Filesystem.applicationDataDirectory + c.folder;
+	var file = hasFile(filename);
+	
+	var path = Ti.Filesystem.applicationDataDirectory + file.folder;
 	var file = Ti.Filesystem.getFile(path, filename);
 	return file.read();
 };
