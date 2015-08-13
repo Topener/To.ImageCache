@@ -150,6 +150,12 @@ var storeFile = function(filename, blob){
 	// check if directory has been created
 	checkDir();
 	
+	// we already have this file
+	if (hasFile(filename)){
+		blob = null;
+		return;
+	}
+	
 	var path = Ti.Filesystem.applicationDataDirectory + c.folder;
 	var file = Ti.Filesystem.getFile(path, filename);
 	file.write(blob);
@@ -231,9 +237,10 @@ var remoteImage = function(url){
  * This function will fetch the image in the background
  * with a configurable cache period
  * @param {String} url of the image to cache
- * @param {Integer} Timeout in milliseconds
+ * @param {Integer} (Optional) Timeout in milliseconds
+ * @param {Function} (Optional) callback function, blob will be returned
  */
-var cache = function(url, timeout){
+var cache = function(url, timeout, cb){
 	var timeout = timeout || 30000;
 
 	// if file is already cached, don't do so again
@@ -248,6 +255,7 @@ var cache = function(url, timeout){
 	var xhr = Titanium.Network.createHTTPClient({
 		onload: function() {
 			storeFile(filename, this.responseData);
+			cb && cb(readFile(filename));
 		},
 		timeout: timeout
 	});

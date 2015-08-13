@@ -53,7 +53,15 @@ This method is preferred for bigger images, as this can happen in the background
 require('To.ImageCache').cache('http://example.com/image.jpg');
 ```
 
-This function will NOT return a blob, but will cache the file using `XHR`. 
+This function will NOT return a blob, but will cache the file using `XHR`.
+
+Aditonally, you can add a timeout and callback function: 
+
+```js
+require('To.ImageCache').cache('http://example.com/image.jpg', 25000, function(blob){
+	$.imageView.image = blob;
+});
+```
 
 ## Clearing Cache
 
