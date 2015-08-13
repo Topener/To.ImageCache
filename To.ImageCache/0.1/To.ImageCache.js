@@ -248,13 +248,14 @@ var cache = function(url, timeout){
 	var xhr = Titanium.Network.createHTTPClient({
 		onload: function() {
 			storeFile(filename, this.responseData);
+			//Clear out temporary files
+			clear_temp_files();
 		},
 		timeout: timeout
 	});
 	xhr.open('GET', url);
 	xhr.send();
-	//Clear out temporary files
-	clear_temp_files();
+
 	return true;
 };
 
