@@ -5,7 +5,7 @@ A simple CommonJS module to cache images a little less temporarily, and configur
 
 Add `To.ImageCache` CommonJS module to your project. Either download this project, or install using `gittio`
 
-`gittio install To.ImageCache` (as soon as it is available on Gittio)
+`gittio install To.ImageCache`
 
 Follow regular steps to include it in your project
 
