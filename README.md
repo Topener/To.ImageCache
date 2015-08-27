@@ -19,9 +19,12 @@ All current properties available shown below
 require('To.ImageCache').config({
 	debug: true, //default "false"
 	expireTime: 100000, // time in seconds, default 43200 = 12 hours
-	folder: 'CustomFolder' // folder to store the cache in, default "ToCache"
+	folder: 'CustomFolder', // folder to store the cache in, default "ToCache"
+	remoteBackup: true // iOS Only do you want the images to be backed up to iCloud?
 });
 ```
+
+The config can be changed at all times, between different files so support multiple folders, expiration times and file specfic backup properties. You only have to pass what you want to change from now on. No need to pass all config properties
 
 All available images will be stored in Properties
 

@@ -1,7 +1,8 @@
 var c = {
 	folder: 'ToCache',
 	expireTime: 43200, // half a day (in seconds)
-	debug: true
+	debug: false, // does console.log debug
+	remoteBackup: true // do you want the file(s) to be backed up to a remote cloud, like iCloud on iOS? Doesn't work on Android
 };
 
 var fileList = Ti.App.Properties.getList('To.ImageCache.ImageList',[]);
@@ -11,6 +12,9 @@ var fileList = Ti.App.Properties.getList('To.ImageCache.ImageList',[]);
  * @param {Object} Config Object as per spec
  */
 var config = function(config){
+	if (!config){
+		return;
+	}
 	if (config.debug){
 		Ti.API.info('TIC - setting config');
 	}
@@ -125,6 +129,11 @@ var removeFile = function(filename){
 	}
 };
 
+function md5FileName(url){
+	var filename = Ti.Utils.md5HexDigest(url);
+	return filename;
+}
+
 /**
  * Remove a file based on URL from cache.
  * Useful if you don't know the filename
@@ -134,7 +143,7 @@ var removeRemote = function(url){
 	if (c.debug)
 		Ti.API.info('TIC - removing file based on URL');
 
-	var filename = Ti.Utils.md5HexDigest(url);
+	var filename = md5FileName(url);
 	removeFile(filename);
 };
 
@@ -158,6 +167,11 @@ var storeFile = function(filename, blob){
 	
 	var path = Ti.Filesystem.applicationDataDirectory + c.folder;
 	var file = Ti.Filesystem.getFile(path, filename);
+	
+	if (OS_IOS && c.hasOwnProperty(remoteBackup)){
+		file.remoteBackup = c.remoteBackup;
+	}
+	
 	file.write(blob);
 	// destroy file after it has been saved
 	file = null;
@@ -204,7 +218,7 @@ var remoteImage = function(url){
 		Ti.API.info('remote image');
 	}
 	// calculate local filename
-	var filename = Ti.Utils.md5HexDigest(url);
+	var filename = md5FileName(url);
 	Ti.API.info(filename);
 	
 	if (hasFile(filename)){
@@ -244,7 +258,7 @@ var cache = function(url, timeout, cb){
 	var timeout = timeout || 30000;
 
 	// if file is already cached, don't do so again
-	var filename = Ti.Utils.md5HexDigest(url);
+	var filename = md5FileName(url);
 	if (hasFile(filename)){
 		if (c.debug)
 			Ti.API.info('TIC - file already cached');
