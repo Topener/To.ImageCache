@@ -168,11 +168,13 @@ var storeFile = function(filename, blob){
 	var path = Ti.Filesystem.applicationDataDirectory + c.folder;
 	var file = Ti.Filesystem.getFile(path, filename);
 	
-	if (OS_IOS && c.hasOwnProperty(remoteBackup)){
-		file.remoteBackup = c.remoteBackup;
+	if (file.write(blob)){
+		// do we need to cache the file?
+		if (Ti.Platform.name == 'iPhone OS' && c.hasOwnProperty('remoteBackup')){
+			file.remoteBackup = c.remoteBackup;
+		}
 	}
-	
-	file.write(blob);
+		
 	// destroy file after it has been saved
 	file = null;
 	
