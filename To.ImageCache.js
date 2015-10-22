@@ -15,7 +15,7 @@ var config = function(config){
 	if (!config){
 		var copy = {};
 		for (var attr in c) {
-        	if (c.hasOwnProperty(attr)) copy[attr] = c[attr];
+        		if (c.hasOwnProperty(attr)) copy[attr] = c[attr];
 		}
 
 		return copy;
