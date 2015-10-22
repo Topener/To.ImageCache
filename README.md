@@ -26,6 +26,12 @@ require('To.ImageCache').config({
 
 The config can be changed at all times, between different files so support multiple folders, expiration times and file specfic backup properties. You only have to pass what you want to change from now on. No need to pass all config properties
 
+If you want to make a copy of the config, so you can restore it later, use the getter
+
+```js
+var config = require('To.ImageCache').config();
+```
+
 All available images will be stored in Properties
 
 ```js
