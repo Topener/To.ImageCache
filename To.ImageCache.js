@@ -4,6 +4,7 @@ var c = {
 	debug: false, // does console.log debug
 	remoteBackup: true // do you want the file(s) to be backed up to a remote cloud, like iCloud on iOS? Doesn't work on Android
 };
+Ti.API.info("LOADED To.ImageCache -- VERSION 0.2.5");
 
 var fileList = Ti.App.Properties.getList('To.ImageCache.ImageList',[]);
 
@@ -220,38 +221,53 @@ var readFile = function(filename){
  * @param {String} url
  */
 var remoteImage = function(url){
-	if (c.debug){
-		Ti.API.info('TIC - *************');
-		Ti.API.info('remote image');
+    if (c.debug){
+        Ti.API.info('TIC - *************');
+        Ti.API.info('remote image');
+    }
+	if(url === ""){
+		if (c.debug)
+			Ti.API.info('TIC - url is blank - skipping');
+		return null;
 	}
-	// calculate local filename
-	var filename = md5FileName(url);
-	Ti.API.info(filename);
+    // calculate local filename
+    var filename = md5FileName(url);
+    Ti.API.info(filename);
 
-	if (hasFile(filename)){
-		if (c.debug){
-			Ti.API.info('TIC - has file in system');
-			Ti.API.info('TIC - *************');
-		}
+    if (hasFile(filename)){
+        if (c.debug){
+            Ti.API.info('TIC - has file in system');
+            Ti.API.info('TIC - *************');
+        }
 
-		// get file
-		return readFile(filename);
-	}
-	Ti.API.info('TIC - doesn\'t have file yet');
+        var image = Ti.UI.createImageView({
+            image : readFile(filename),
+            width : Ti.UI.SIZE,
+            height : Ti.UI.SIZE
+        });
 
-	// generate a blob
-	var image = Ti.UI.createImageView({
-		image : url,
-		width : Ti.UI.SIZE,
-		height : Ti.UI.SIZE
-	});
-	var blob =  image.toBlob();
+    } else {
+        Ti.API.info('TIC - doesn\'t have file yet');
+        
+        // generate a blob
+        var image = Ti.UI.createImageView({
+            image : url,
+            width : Ti.UI.SIZE,
+            height : Ti.UI.SIZE
+        });
+    }
+    var blob =  image.toBlob();
 	image = null;
+	
+    if(!blob || blob.width == 0 || blob.height == 0){
+		if (c.debug)
+			Ti.API.info('TIC - image is empty - image probably no longer exists');
+		return null;
+	}else 
+    	storeFile(filename, blob);
 
-	storeFile(filename, blob);
-
-	Ti.API.info('TIC - *************');
-	return blob;
+    Ti.API.info('TIC - *************');
+    return blob;
 };
 
 /**
@@ -262,7 +278,13 @@ var remoteImage = function(url){
  * @param {Function} (Optional) callback function, blob will be returned
  */
 var cache = function(url, timeout, cb){
-	var timeout = timeout || 30000;
+	if(url === ""){
+		if (c.debug)
+			Ti.API.info('TIC - url is blank - skipping');
+		return null;
+	}
+	
+	var timeout = timeout || 15000;
 
 	// if file is already cached, don't do so again
 	var filename = md5FileName(url);
@@ -275,7 +297,17 @@ var cache = function(url, timeout, cb){
 
 	var xhr = Titanium.Network.createHTTPClient({
 		onload: function() {
-			storeFile(filename, this.responseData);
+			// generate a blob
+			var image = Ti.UI.createImageView({
+				image : this.responseData,
+				width : Ti.UI.SIZE,
+				height : Ti.UI.SIZE
+			});
+			var blob =  image.toBlob();
+			image = null;
+		
+			storeFile(filename, blob);
+			blob = null;
 			cb && cb(readFile(filename));
 		},
 		timeout: timeout
