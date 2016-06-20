@@ -1,0 +1,16 @@
+{
+  "name": "To.ImageCache",
+  "description": "A simple image cacher module for Titanium Applications if you want to maintain it manually",
+  "version": "0.2.2",
+  "main": "To.ImageCache.js",
+  "keywords": ["cache","titanium","images"],
+  "author": "Rene Pot",
+  "repository": {
+    "type": "git",
+    "url": "github.com/Topener/To.ImageCache"
+  },
+  "bugs": {
+    "url": "github.com/Topener/To.ImageCache/issues"
+  },
+  "homepage": "http://renepot.net"
+}
