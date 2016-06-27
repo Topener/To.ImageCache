@@ -1,4 +1,4 @@
-version: 0.2.1
+version: 0.2.2
 description: A simple Commonjs module to cache images a little less temporarily
 author: Rene Pot
 license: Apache 2.0
