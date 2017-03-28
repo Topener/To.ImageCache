@@ -20,8 +20,8 @@ var config = function(config){
 	}
 	_.each(c, function(value, key){
 		if (config.hasOwnProperty(key)){
-			c[key] = value;
-			Ti.API.info('TIC - setting ' + key + ' to ' + value);
+			c[key] = config[key];
+			Ti.API.info('TIC - setting ' + key + ' to ' + config[key]);
 		};
 	});
 };
