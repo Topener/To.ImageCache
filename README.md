@@ -5,9 +5,21 @@ A simple CommonJS module to cache images a little less temporarily, and configur
 
 Add `To.ImageCache` CommonJS module to your project. Either download this project, or install using `gittio`
 
+### Through http://gitt.io
+
 `gittio install To.ImageCache`
 
 Follow regular steps to include it in your project
+
+### Through NPM
+In classic go to the `Resources` folder, for **Alloy** go to the `lib` directory of your project, then run the following command
+
+`npm install to.imagecache`
+_Note: if your app doesn't have `node_modules` yet, run `npm init` first!_
+
+This will install to.imagecache in your project. Once that is done, include the project using just lowercase.
+
+`require('to.imagecache')`
 
 ## Configuration
 

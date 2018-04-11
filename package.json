@@ -1,7 +1,7 @@
 {
   "name": "to.imagecache",
   "description": "A simple image cacher module for Titanium Applications if you want to maintain it manually",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "main": "To.ImageCache.js",
   "keywords": ["cache","titanium","images","titanium-module"],
   "author": "Rene Pot",
