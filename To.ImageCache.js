@@ -279,7 +279,8 @@ var cache = function(url, timeout, cb){
 	if (hasFile(filename)){
 		if (c.debug)
 			Ti.API.info('TIC - file already cached');
-			
+		
+		cb && cb(readFile(filename));
 		return false;
 	}
 		
