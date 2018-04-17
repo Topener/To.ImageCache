@@ -17,18 +17,16 @@ In classic go to the `Resources` folder, for **Alloy** go to the `lib` directory
 `npm install to.imagecache`
 _Note: if your app doesn't have `node_modules` yet, run `npm init` first!_
 
-This will install to.imagecache in your project. Once that is done, include the project using just lowercase.
-
-`require('to.imagecache')`
-
 ## Configuration
+
+**IMPORTANT: Version 1.0 is not backwards compatible with previous versions. Name has changed to lowercase for NPM support**
 
 The configuration is simple: No configuration is needed, unless you want to change something. 
 
 All current properties available shown below
 
 ```js
-require('To.ImageCache').config({
+require('to.imagecache').config({
 	debug: true, //default "false"
 	expireTime: 100000, // time in seconds, default 43200 = 12 hours
 	folder: 'CustomFolder', // folder to store the cache in, default "ToCache"
@@ -41,7 +39,7 @@ The config can be changed at all times, between different files so support multi
 If you want to make a copy of the config, so you can restore it later, use the getter
 
 ```js
-var config = require('To.ImageCache').config();
+var config = require('to.imagecache').config();
 ```
 
 All available images will be stored in Properties
@@ -61,7 +59,7 @@ All available images will be stored in Properties
 Note: This might cause delays in your app and is only recommended for smaller images
 
 ```js
-var blob = require('To.ImageCache').remoteImage('http://example.com/image.jpg');
+var blob = require('to.imagecache').remoteImage('http://example.com/image.jpg');
 ```
 
 This will cache the image the first time it is called, and the next time you request this same file it will return the same blob, but this time stored locally
@@ -71,7 +69,7 @@ This will cache the image the first time it is called, and the next time you req
 This method is preferred for bigger images, as this can happen in the background
 
 ```js
-require('To.ImageCache').cache('http://example.com/image.jpg');
+require('to.imagecache').cache('http://example.com/image.jpg');
 ```
 
 This function will NOT return a blob, but will cache the file using `XHR`.
@@ -79,7 +77,7 @@ This function will NOT return a blob, but will cache the file using `XHR`.
 Aditonally, you can add a timeout and callback function: 
 
 ```js
-require('To.ImageCache').cache('http://example.com/image.jpg', 25000, function(blob){
+require('to.imagecache').cache('http://example.com/image.jpg', 25000, function(blob){
 	$.imageView.image = blob;
 });
 ```
@@ -91,7 +89,7 @@ You want, of course, to clear the cache when needed. This is *NOT* done automati
 The best function to call is `flushExpired`
 
 ```js
-require('To.ImageCache').flushExpired();
+require('to.imagecache').flushExpired();
 ```
 
 This function will remove all files older than the expired time.
@@ -99,7 +97,7 @@ This function will remove all files older than the expired time.
 You can also clear all cache
 
 ```js
-require('To.ImageCache').clearCache();
+require('to.imagecache').clearCache();
 ```
 
 This will remove all cached files *regardless* of expired time.
@@ -107,14 +105,14 @@ This will remove all cached files *regardless* of expired time.
 You can also remove a single file by URL:
 
 ```js
-require('To.ImageCache').removeRemote('http://example.com/image.jpg');
+require('to.imagecache').removeRemote('http://example.com/image.jpg');
 ```
 This will also *NOT* take expiry time in consideration
 
 If you know the filename (which is internally generated, so you probably won't), you can remove by filename too
 
 ```js
-require('To.ImageCache').removeFile('a128a10e623e08c9b5b704bf162d770e');
+require('to.imagecache').removeFile('a128a10e623e08c9b5b704bf162d770e');
 ```
 
 ## Advanced
@@ -122,7 +120,7 @@ require('To.ImageCache').removeFile('a128a10e623e08c9b5b704bf162d770e');
 You can fetch the entire cache size, in bytes, from the module. This could, for example, be used to display users so they can be aware how much cache is present, and you could give the users the ability to remove cache manually
 
 ```js
-require('To.ImageCache').cacheSize()
+require('to.imagecache').cacheSize()
 ```
 
 You can also, at a later point, update the config. Expire time is per-file, and stored per-file. So changing it later will not update the currently stored files. Might be usefull for different expiry times.

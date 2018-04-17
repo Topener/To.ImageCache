@@ -284,7 +284,7 @@ var cache = function(url, timeout, cb){
 		return false;
 	}
 		
-	var xhr = Titanium.Network.createHTTPClient({
+	var xhr = Ti.Network.createHTTPClient({
 		onload: function() {
 			storeFile(filename, this.responseData);
 			cb && cb(readFile(filename));
